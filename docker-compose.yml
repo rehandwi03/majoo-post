@@ -1,0 +1,21 @@
+version: '3.1'
+services:
+  db:
+    container_name: postgresql
+    image: postgres:9.6-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_ROOT_PASSWORD: rehan123
+      POSTGRES_USER: rehan123
+      POSTGRES_PASSWORD: rehan123
+      POSTGRES_DB: majoo-pos
+
+  apps:
+    container_name: majoo-service
+    build:
+      context: .
+    restart: always
+    ports:
+      - 8080:8080
