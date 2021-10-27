@@ -50,5 +50,3 @@ docker-compose up -d
 |               | */api/products*  |   *GET*      |    Yes       |Get all product
 |               | */api/products/:id*  |   *DELETE*      |    Yes       |Delete product
 |               | */api/products/image*  |   *POST*      |    Yes       |Upload image product
-
-g
