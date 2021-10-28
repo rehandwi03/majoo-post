@@ -28,12 +28,12 @@ docker-compose up -d
 
 | Name          | Endpoint         | Method        | With Token   | Description   |
 | ------------- | -------------    | ------------- |------------- |------------- |
-| Register      | */api/register*  |   *POST*      |    No        |For registering user
 | Auth          | */api/login*     |   *POST*      |    No        |For login user
 | User          | */api/users/:id*  |   *GET*       |    Yes       |Get detail of user
 |               | */api/users*      |   *PUT*       |    Yes       |Update user
 |               | */api/users/:id*  |   *DELETE*    |    Yes       |Delete user
 |               | */api/users*      |   *GET*       |    Yes       |Get all user
+|               | */api/users*      |   *POST*      |    Yes       |Create user
 | Merchant      | */api/merchants*  |   *POST*      |    Yes       |Create merchant
 |               | */api/merchants/:id* |   *GET*    |    Yes       |Get merchant detail
 |               | */api/merchants* |   *PUT*        |    Yes       |Update merchant

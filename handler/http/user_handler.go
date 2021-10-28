@@ -19,7 +19,7 @@ type userHandler struct {
 func NewUserHandler(app fiber.Router, userService service.UserService) {
 	handler := userHandler{userSvc: userService}
 
-	app.Post("/register", handler.saveUser)
+	app.Post("/users", middleware.JwtProtected(), handler.saveUser)
 	app.Get("/users/:id", middleware.JwtProtected(), handler.getByID)
 	app.Put("/users", middleware.JwtProtected(), handler.updateUser)
 	app.Delete("/users/:id", middleware.JwtProtected(), handler.deleteByID)
