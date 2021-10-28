@@ -44,8 +44,16 @@ func (p *productHandler) uploadImage(c *fiber.Ctx) error {
 		)
 	}
 
-	if productId := form.Value["product_id"]; len(productId) > 0 {
-		fmt.Println(productId)
+	productId := form.Value["product_id"]
+
+	if len(productId) < 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(
+			helper.ErrorResponse{
+				Message: "StatusBadRequest",
+				Status:  "failed",
+				Errors:  "product id not found",
+			},
+		)
 	}
 
 	files := form.File["image"]
@@ -57,19 +65,28 @@ func (p *productHandler) uploadImage(c *fiber.Ctx) error {
 
 		splitHeader := strings.Split(header, "/")
 		if splitHeader[0] != "image" {
-			return c.Status(fiber.StatusBadRequest).JSON(
-				helper.ErrorResponse{
-					Message: "StatusBadRequest",
-					Status:  "failed",
-					Errors:  "file isn't image format",
-				},
-			)
+			return &custom_error.BadRequest{Message: "file format isn't image"}
+
 		}
 
+		fileName := strconv.Itoa(rand.Int()) + file.Filename
+
 		if err := c.SaveFile(
-			file, fmt.Sprintf("./internal/file/%s", strconv.Itoa(rand.Int())+file.Filename),
+			file, fmt.Sprintf("./internal/file/%s", fileName),
 		); err != nil {
 			return err
+		}
+
+		err = p.productSvc.SaveProductIDImage(c.Context(), productId[0], fileName)
+		if err != nil {
+			log.Println(err)
+			return c.Status(fiber.StatusInternalServerError).JSON(
+				helper.ErrorResponse{
+					Message: "StatusInternalServerError",
+					Status:  "failed",
+					Errors:  "internal server error",
+				},
+			)
 		}
 	}
 

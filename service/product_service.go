@@ -19,6 +19,7 @@ type ProductService interface {
 	DeleteProduct(ctx context.Context, params map[string]interface{}) error
 	GetByParam(ctx context.Context, params map[string]interface{}) (*response.ProductResponse, error)
 	Fetch(ctx context.Context, ProductCriteria criteria.ProductCriteria) (*util.PaginationResponse, error)
+	SaveProductIDImage(ctx context.Context, productId string, fileName string) error
 }
 
 type productService struct {
@@ -30,6 +31,32 @@ func NewProductService(
 	productRepository repository.ProductRepository, outletRepository repository.OutletRepository,
 ) ProductService {
 	return &productService{productRepo: productRepository, outletRepo: outletRepository}
+}
+
+func (p *productService) SaveProductIDImage(ctx context.Context, productId string, fileName string) error {
+	params := map[string]interface{}{
+		"where": map[string]interface{}{
+			"default": map[string]interface{}{
+				"id = ?": productId,
+			},
+		},
+	}
+
+	product, err := p.productRepo.GetByParam(ctx, params)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return &custom_error.NotFoundError{Message: "product not found"}
+		}
+	}
+
+	product.Image = fileName
+
+	_, err = p.productRepo.Save(ctx, product)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *productService) SaveProduct(ctx context.Context, request *request.ProductAddRequest) (uuid.UUID, error) {
